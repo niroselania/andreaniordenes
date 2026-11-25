@@ -17,4 +17,4 @@ Las columnas se buscan por encabezado; si no se encuentra, se usa la letra.
 
 ## Deploy en Portainer
 Stacks → Add stack → Repository → URL del repo, compose path `docker-compose.yml` → Deploy.
-Abrir `http://<servidor>:8085`.
+Abrir `http://<servidor>:1000`.

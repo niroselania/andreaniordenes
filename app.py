@@ -1,6 +1,7 @@
 import os, json, threading
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from datetime import timezone, timedelta
 from flask import Flask, render_template, request, send_file, redirect, url_for, flash
 from openpyxl import load_workbook
 from procesar import procesar
@@ -12,7 +13,10 @@ app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 DATA_DIR = os.environ.get("DATA_DIR", "/data")
 ARCHIVO = os.path.join(DATA_DIR, "ultimo_procesado.xlsx")
 META = os.path.join(DATA_DIR, "ultimo.json")
-TZ = ZoneInfo(os.environ.get("TZ", "America/Argentina/Buenos_Aires"))
+try:
+    TZ = ZoneInfo(os.environ.get("TZ", "America/Argentina/Buenos_Aires"))
+except Exception:  # imagen sin base de zonas horarias
+    TZ = timezone(timedelta(hours=-3))
 os.makedirs(DATA_DIR, exist_ok=True)
 _lock = threading.Lock()
 
