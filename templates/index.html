@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Procesar órdenes</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:24px;background:#f6f7f9;color:#222}
+.card{background:#fff;border-radius:8px;padding:16px 20px;margin-bottom:16px;box-shadow:0 1px 3px #0002}
+button,.btn{background:#1f6feb;color:#fff;border:0;padding:9px 16px;border-radius:6px;cursor:pointer;text-decoration:none;font-size:14px;display:inline-block}
+.err{color:#b00}
+.tabla{overflow:auto;max-height:70vh;background:#fff;border:1px solid #ddd}
+table{border-collapse:collapse;font-size:12px;white-space:nowrap}
+th,td{border:1px solid #e3e3e3;padding:4px 8px}
+th{background:#eef2f7;position:sticky;top:0}
+td.n{color:#888}
+</style></head><body>
+<h2>Procesar export de órdenes</h2>
+{% with m = get_flashed_messages() %}{% for x in m %}<p class="err">{{x}}</p>{% endfor %}{% endwith %}
+<div class="card">
+<form action="/subir" method="post" enctype="multipart/form-data">
+  <input type="file" name="archivo" accept=".xlsx" required> <button>Subir y procesar</button> <small>(reemplaza al reporte actual)</small>
+</form>
+<small>Se eliminan: líneas que no son "Line Item"/"Shipping Line" (EO), canceladas (N), pago distinto de "paid" (CB), "on hold" (CC) y Gift Card (FP).</small>
+</div>
+{% if meta %}
+<div class="card">
+  <b>Reporte actual:</b> {{meta.original}} · subido el {{meta.fecha}}<br>
+  Hoja {{meta.hoja}}: quedaron {{meta.total}} filas, se eliminaron {{meta.eliminadas}}{% for k,v in meta.resumen.items() %} · {{k}}: {{v}}{% endfor %}
+  <p><a class="btn" href="/descargar">Descargar {{meta.nombre}}</a></p>
+</div>
+<div class="tabla"><table>
+<thead><tr><th>#</th>{% for c in filas[0] %}<th>{{c if c is not none}}</th>{% endfor %}</tr></thead>
+<tbody>{% for f in filas[1:] %}<tr><td class="n">{{loop.index}}</td>{% for c in f %}<td>{{c if c is not none}}</td>{% endfor %}</tr>{% endfor %}</tbody>
+</table></div>
+{% else %}
+<div class="card">Todavía no se subió ningún reporte.</div>
+{% endif %}
+</body></html>

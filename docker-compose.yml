@@ -1,0 +1,15 @@
+services:
+  planilla-ordenes:
+    build: .
+    container_name: planilla-ordenes
+    ports:
+      - "8085:8000"
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+      - DATA_DIR=/data
+    volumes:
+      - planilla-data:/data
+    restart: unless-stopped
+
+volumes:
+  planilla-data:
